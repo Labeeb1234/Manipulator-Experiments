@@ -122,7 +122,7 @@ def main():
     while True:
         try:
             # connecting to arm
-            swift.connect(port='/dev/ttyACM1', baudrate=115200)
+            swift.connect(port='/dev/ttyACM2', baudrate=115200)
             # Wait until the robot is ready
             while(swift.waiting_ready() == False):
                 print(f"waiting for arm to be ready.....")  
@@ -133,7 +133,6 @@ def main():
             servo_info = swift.get_servo_attach()
             mode = swift.get_mode()
 
-            test_cam(0)
     
             # motion_flag = end_effector_circle_motion(swift, True, 100.0)
             # if motion_flag == True:
