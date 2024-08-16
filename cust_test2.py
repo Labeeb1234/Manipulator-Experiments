@@ -15,7 +15,7 @@ swift = SwiftAPI(filters={'hwid': 'USB VID:PID=2341:0042'}, callback_thread_pool
 
 def set_eepose(swift, x, y, z):
     swift.set_position(x=x, y=y, z=z) # speed_val in mm/min
-    result = swift.flush_cmd(timeout=10, wait_stop=True)
+    result = swift.flush_cmd(timeout=10, wait_stop=True) # ---> use this its better
     if result == 'OK':
         print(f"{swift.get_position()}")
         print("All commands completed successfully and robot is stopped.")
@@ -28,15 +28,16 @@ def set_eepose(swift, x, y, z):
 
 def set_joint_angles(swift, angles, joint_id):
     for angle in angles:
-        result = swift.set_servo_angle(joint_id, angle, wait=True, timeout=10)
-    if result == 'OK':
-        joint_angle = swift.get_servo_angle(joint_id)
-        print(f"joint-{joint_id}-->angle:{joint_angle}")
-        print("All commands completed successfully and robot is stopped.")
-        return True
-    elif result == 'TIMEOUT':
-        print("Timed out waiting for commands to complete or robot to stop.")
-        return False     
+        swift.set_servo_angle(joint_id, angle)
+        result = swift.flush_cmd(timeout=10, wait_stop=True)
+        if result == 'OK':
+            joint_angle = swift.get_servo_angle(joint_id)
+            print(f"joint-{joint_id}-->angle:{joint_angle}")
+            print("All commands completed successfully and robot is stopped.")
+            return True
+        elif result == 'TIMEOUT':
+            print("Timed out waiting for commands to complete or robot to stop.")
+            return False     
     return False
 
 def set_wrist_joint_angle(swift, angle):
@@ -76,8 +77,6 @@ def end_effector_circle_motion(swift, start_flag, control_freq):
         set_home_position(swift)
         print("Manipulator moved to home position.")
         return True     
-
-    return False
 
 
     
@@ -122,7 +121,7 @@ def main():
     while True:
         try:
             # connecting to arm
-            swift.connect(port='/dev/ttyACM2', baudrate=115200)
+            swift.connect(port='/dev/ttyACM1', baudrate=115200)
             # Wait until the robot is ready
             while(swift.waiting_ready() == False):
                 print(f"waiting for arm to be ready.....")  
@@ -132,7 +131,7 @@ def main():
             # system feedback
             servo_info = swift.get_servo_attach()
             mode = swift.get_mode()
-
+            # set_joint_angles(swift, [90.0], 0)
     
             # motion_flag = end_effector_circle_motion(swift, True, 100.0)
             # if motion_flag == True:
