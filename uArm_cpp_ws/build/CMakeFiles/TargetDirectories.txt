@@ -1,3 +1,0 @@
-/home/inlabamr/urArmSP_ws/uArm_cpp_ws/build/CMakeFiles/uarm_ports.dir
-/home/inlabamr/urArmSP_ws/uArm_cpp_ws/build/CMakeFiles/edit_cache.dir
-/home/inlabamr/urArmSP_ws/uArm_cpp_ws/build/CMakeFiles/rebuild_cache.dir
