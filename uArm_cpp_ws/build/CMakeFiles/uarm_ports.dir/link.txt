@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/uarm_ports.dir/src/uArmtester.cpp.o -o uarm_ports   -L/home/inlabamr/urArmSP_ws/uArm_cpp_ws/uArm-SDK/lib  -Wl,-rpath,/home/inlabamr/urArmSP_ws/uArm_cpp_ws/uArm-SDK/lib -luarm 
