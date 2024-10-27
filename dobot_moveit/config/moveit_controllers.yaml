@@ -1,0 +1,13 @@
+controller_names:
+  - joint_trajectory_controller
+
+joint_trajectory_controller:
+  type: FollowJointTrajectory
+  action_ns: follow_joint_trajectory
+  default: true
+  joints:
+    - magician_joint_1
+    - magician_joint_2
+    - magician_joint_3
+    - magician_joint_4
+    - magician_joint_5

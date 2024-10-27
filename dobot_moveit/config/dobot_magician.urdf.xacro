@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="dobot_magician">
+    <xacro:arg name="initial_positions_file" default="initial_positions.yaml" />
+
+    <!-- Import dobot_magician urdf file -->
+    <xacro:include filename="$(find dobot_description)/urdf/dobot_magician.xacro" />
+
+    <!-- Import control_xacro -->
+    <xacro:include filename="dobot_magician.ros2_control.xacro" />
+
+
+    <xacro:dobot_magician_ros2_control name="FakeSystem" initial_positions_file="$(arg initial_positions_file)"/>
+
+</robot>
