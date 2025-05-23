@@ -17,4 +17,4 @@
 # Hardware Experiments
 ### =========================================================================
 ## Dobot Magician (No End Effector Attached as of now hence a 3R system)
-
+- Gesture control
