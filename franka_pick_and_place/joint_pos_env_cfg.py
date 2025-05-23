@@ -14,9 +14,12 @@ from isaaclab.managers.action_manager import ActionTermCfg as ActionTerm
 from isaaclab.managers.curriculum_manager import CurriculumTermCfg as CurrTerm
 
 from isaaclab.managers import SceneEntityCfg
-from isaaclab.assets import AssetBaseCfg, ArticulationCfg
+from isaaclab.assets import AssetBaseCfg, ArticulationCfg, RigidObjectCfg
+from isaaclab.sensors import ContactSensorCfg, TiledCameraCfg
 from isaaclab_assets.robots.franka import FRANKA_PANDA_CFG
 
+
+import isaaclab_tasks.manager_based.manipulation.franka_pick_and_place.mdp as cmdp
 
 @configclass
 class MyCustomSceneCfg(InteractiveSceneCfg):
@@ -31,25 +34,63 @@ class MyCustomSceneCfg(InteractiveSceneCfg):
         prim_path="/World/Light", spawn=sim_utils.DomeLightCfg(color=(0.75, 0.75, 0.75), intensity=3000.0,)
     )
 
+    # robot articulation (system)
     robot: ArticulationCfg = FRANKA_PANDA_CFG.replace(prim_path="{ENV_REGEX_NS}/Robot") #type:ignore
+
+    # rgb-camera sensor
+    tiled_camera: TiledCameraCfg = TiledCameraCfg(
+        prim_path="{ENV_REGEX_NS}/Robot/panda_hand/Camera",
+        offset=TiledCameraCfg.OffsetCfg(pos=(0.08647, 0.03819, -0.04451), rot=(-0.0148355, 0.8732992, -0.1098778, 0.4744), convention="world"),
+        data_types=["rgb"],
+        spawn=sim_utils.PinholeCameraCfg(
+            focal_length=24.0, focus_distance=400.0, horizontal_aperture=20.955, clipping_range=(0.1, 20.0)
+        ),
+        width=100,
+        height=100,
+    )
+
+    # contact sensor on the grippers
+    contact_forces_gripper: ContactSensorCfg = ContactSensorCfg(
+        prim_path="{ENV_REGEX_NS}/Robot/panda_leftfinger",
+        update_period=0.0,
+        history_length=6,
+        debug_vis=True,
+        track_pose=True,
+        track_air_time=True
+    )
+
+    # cube object for pick and place
+    obj: RigidObjectCfg = RigidObjectCfg(
+        prim_path="{ENV_REGEX_NS}/Cube",
+        spawn=sim_utils.CuboidCfg(
+            size=(0.1, 0.1, 0.1),
+            rigid_props=sim_utils.RigidBodyPropertiesCfg(),
+            mass_props=sim_utils.MassPropertiesCfg(mass=10.0),
+            collision_props=sim_utils.CollisionPropertiesCfg(),
+            physics_material=sim_utils.RigidBodyMaterialCfg(static_friction=1.0),
+            visual_material=sim_utils.PreviewSurfaceCfg(diffuse_color=(1.0, 0.0, 0.0), metallic=0.2),
+        ),
+        init_state=RigidObjectCfg.InitialStateCfg(pos=(1.0, 0.5, 0.05)),
+    )
 
 
 @configclass
 class ActionsCfg:
     # for now using Abinitio based controlling 
-    joint_actions = mdp.JointEffortActionCfg(
+    joint_actions = mdp.JointPositionActionCfg(
         asset_name="robot",
         joint_names=["panda_joint[1-7]"],
         scale=1.0, # raw action scaler
         offset=0.0 # action offsetter
     )
 
-    # gripper_actions = mdp.BinaryJointPositionActionCfg(
-    #     asset_name="robot",
-    #     joint_names=["panda_finger.*"],
-    #     open_command_expr={"panda_finger_.*": 0.04},
-    #     close_command_expr={"panda_finger_.*": 0.0},
-    # )
+    # binary joint position based control (dependent joint actions)
+    gripper_actions = mdp.BinaryJointPositionActionCfg(
+        asset_name="robot",
+        joint_names=["panda_finger.*"],
+        open_command_expr={"panda_finger_.*": 0.04},
+        close_command_expr={"panda_finger_.*": 0.0},
+    )
 
 
 @configclass
@@ -57,25 +98,43 @@ class ObservationsCfg:
     # creating a policy grp to keep track of the feedback from the env
     @configclass
     class PolicyCfg(ObsGroup):
-        # joint positions
-        joint_pos = ObsTerm(
-            func=mdp.joint_pos,
+        # object pos wrt end-effector
+        obj_rel_pose = ObsTerm(
+            func=cmdp.obj_eef_relative_pose,
             params={
-                "asset_cfg": SceneEntityCfg("robot"),
-                "degree": True
+                "robot_cfg": SceneEntityCfg("robot"),
+                "obj_cfg": SceneEntityCfg("obj")
             }
-        ) # in rad
+        )
 
-        # joint velocities
-        joint_vel = ObsTerm(
-            func=mdp.joint_vel,
-            params={
-                "asset_cfg": SceneEntityCfg("robot"),
-            }
-        ) # in rad/s
+        # # joint positions
+        # joint_pos = ObsTerm(
+        #     func=mdp.joint_pos,
+        #     params={
+        #         "asset_cfg": SceneEntityCfg("robot"),
+        #         "degree": False
+        #     }
+        # ) # in rad
 
-        # previous actions
-        previous_actions = ObsTerm(func=mdp.last_action)
+        # # joint velocities
+        # joint_vel = ObsTerm(
+        #     func=mdp.joint_vel,
+        #     params={
+        #         "asset_cfg": SceneEntityCfg("robot"),
+        #     }
+        # ) # in rad/s
+
+
+        # # contact sensor data
+        # contact_sensor_gripper = ObsTerm(
+        #     func=cmdp.contact_sensor_readings,
+        #     params={
+        #         "asset_cfg": SceneEntityCfg("contact_forces_gripper")
+        #     }
+        # )
+
+        # # previous actions
+        # previous_actions = ObsTerm(func=mdp.last_action)
 
         def __post_init__(self):
             self.enable_corruption = True
@@ -109,9 +168,7 @@ class RewardCfg:
         weight=1.0
     )
 
-    # custom reward model (from cmdp) (need to add)
-
-
+    # custom reward model (from cmdp) (need to addd)
 
 
     # joint velocity penalty to control joint velocities
@@ -121,7 +178,7 @@ class RewardCfg:
         params={"asset_cfg": SceneEntityCfg("robot")},
     )
 
-    
+
 # optional ones
 @configclass
 class CurriculumCfg:
@@ -162,7 +219,7 @@ class PandaEnvCfg(ManagerBasedRLEnvCfg):
         '''
         # general settings
         self.decimation = 2
-        self.episode_length_s = 12.0
+        self.episode_length_s = 12.0 # [sec]
         # viewer settings
         self.viewer.eye = (3.5, 3.5, 3.5)
         # simulation settings
