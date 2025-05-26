@@ -99,30 +99,31 @@ class ObservationsCfg:
     @configclass
     class PolicyCfg(ObsGroup):
         # object pos wrt end-effector
-        obj_rel_pose = ObsTerm(
-            func=cmdp.obj_eef_relative_pose,
-            params={
-                "robot_cfg": SceneEntityCfg("robot"),
-                "obj_cfg": SceneEntityCfg("obj")
-            }
-        )
+        # obj_eef_rel_pose = ObsTerm(
+        #     func=cmdp.obj_eef_relative_pose,
+        #     params={
+        #         "robot_cfg": SceneEntityCfg("robot"),
+        #         "obj_cfg": SceneEntityCfg("obj")
+        #     }
+        # )
+
 
         # # joint positions
-        # joint_pos = ObsTerm(
-        #     func=mdp.joint_pos,
-        #     params={
-        #         "asset_cfg": SceneEntityCfg("robot"),
-        #         "degree": False
-        #     }
-        # ) # in rad
+        joint_pos = ObsTerm(
+            func=mdp.joint_pos,
+            params={
+                "asset_cfg": SceneEntityCfg("robot"),
+                "degree": False
+            }
+        ) # in rad
 
         # # joint velocities
-        # joint_vel = ObsTerm(
-        #     func=mdp.joint_vel,
-        #     params={
-        #         "asset_cfg": SceneEntityCfg("robot"),
-        #     }
-        # ) # in rad/s
+        joint_vel = ObsTerm(
+            func=mdp.joint_vel,
+            params={
+                "asset_cfg": SceneEntityCfg("robot"),
+            }
+        ) # in rad/s
 
 
         # # contact sensor data
@@ -134,11 +135,11 @@ class ObservationsCfg:
         # )
 
         # # previous actions
-        # previous_actions = ObsTerm(func=mdp.last_action)
+        previous_actions = ObsTerm(func=mdp.last_action)
 
         def __post_init__(self):
-            self.enable_corruption = True
-            self.concatenate_terms = False
+            self.enable_corruption = False
+            self.concatenate_terms = True
     
     policy: PolicyCfg = PolicyCfg()
 

@@ -27,6 +27,13 @@ def contact_sensor_readings(
 
     return torch.tensor(0.0)
 
+def robot_eef_state_env(env: ManagerBasedEnv, asset_cfg: SceneEntityCfg=SceneEntityCfg("robot"))->torch.Tensor:
+    robot: Articulation = env.scene[asset_cfg.name]
+    eef_idx = robot.data.body_names.index("panda_leftfinger") 
+    eef_pos, eef_q = robot.data.body_pos_w[: , eef_idx], robot.data.body_quat_w[:, eef_idx] # wrt world frame
+    eef_pos = eef_pos-env.scene.env_origins
+
+    return torch.cat((eef_pos, eef_q), dim=1)
 
 def obj_state_w(
     env: ManagerBasedEnv,
@@ -37,7 +44,6 @@ def obj_state_w(
 
     return obj_world_state
 
-
 def obj_arm_relative_pose(
     env: ManagerBasedEnv,
     asset_cfg: SceneEntityCfg = SceneEntityCfg("obj"),
@@ -45,7 +51,6 @@ def obj_arm_relative_pose(
     obj: RigidObject = env.scene[asset_cfg.name]
     obj_pos, obj_q = obj.data.root_pos_w-env.scene.env_origins, obj.data.root_quat_w
     return torch.cat((obj_pos, obj_q), dim=1)
-
 
 def obj_eef_relative_pose(
     env: ManagerBasedEnv,
@@ -55,6 +60,7 @@ def obj_eef_relative_pose(
     
     robot: Articulation = env.scene[robot_cfg.name]
     obj: RigidObject = env.scene[obj_cfg.name]
+    
 
     robot_pos, robot_q = robot.data.root_pos_w, robot.data.root_quat_w # world frame arm base pose
     # robot pose wrt env scene origins --> quats remain the same in this frame too
