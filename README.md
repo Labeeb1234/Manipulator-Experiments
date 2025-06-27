@@ -22,7 +22,7 @@
 
 
   -  After training 5 envs for more than 2k episodes (less than 4k-episodes)
-    -  [video_2](https://github.com/user-attachments/assets/67f04259-4701-4d9d-ad26-e301ff86a27f)
+  - [video_2](https://github.com/user-attachments/assets/67f04259-4701-4d9d-ad26-e301ff86a27f)
 
 
 ### =========================================================================
