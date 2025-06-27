@@ -12,6 +12,7 @@ from isaaclab.managers import TerminationTermCfg as DoneTerm
 from isaaclab.managers import RewardTermCfg as RewTerm
 from isaaclab.managers.action_manager import ActionTermCfg as ActionTerm
 from isaaclab.managers.curriculum_manager import CurriculumTermCfg as CurrTerm
+from isaaclab.managers.command_manager import CommandTermCfg as CommandTerm
 
 from isaaclab.managers import SceneEntityCfg
 from isaaclab.assets import AssetBaseCfg, ArticulationCfg, RigidObjectCfg
@@ -70,7 +71,7 @@ class MyCustomSceneCfg(InteractiveSceneCfg):
             physics_material=sim_utils.RigidBodyMaterialCfg(static_friction=1.0),
             visual_material=sim_utils.PreviewSurfaceCfg(diffuse_color=(1.0, 0.0, 0.0), metallic=0.2),
         ),
-        init_state=RigidObjectCfg.InitialStateCfg(pos=(1.0, 0.5, 0.05)),
+        init_state=RigidObjectCfg.InitialStateCfg(pos=(0.0, 0.5, 0.05)),
     )
 
 
@@ -99,16 +100,15 @@ class ObservationsCfg:
     @configclass
     class PolicyCfg(ObsGroup):
         # object pos wrt end-effector
-        # obj_eef_rel_pose = ObsTerm(
-        #     func=cmdp.obj_eef_relative_pose,
-        #     params={
-        #         "robot_cfg": SceneEntityCfg("robot"),
-        #         "obj_cfg": SceneEntityCfg("obj")
-        #     }
-        # )
+        obj_eef_rel_pose = ObsTerm(
+            func=cmdp.obj_eef_relative_pose,
+            params={
+                "robot_cfg": SceneEntityCfg("robot"),
+                "obj_cfg": SceneEntityCfg("obj")
+            }
+        )
 
-
-        # # joint positions
+        # joint positions
         joint_pos = ObsTerm(
             func=mdp.joint_pos,
             params={
@@ -117,22 +117,13 @@ class ObservationsCfg:
             }
         ) # in rad
 
-        # # joint velocities
+        # joint velocities
         joint_vel = ObsTerm(
             func=mdp.joint_vel,
             params={
                 "asset_cfg": SceneEntityCfg("robot"),
             }
         ) # in rad/s
-
-
-        # # contact sensor data
-        # contact_sensor_gripper = ObsTerm(
-        #     func=cmdp.contact_sensor_readings,
-        #     params={
-        #         "asset_cfg": SceneEntityCfg("contact_forces_gripper")
-        #     }
-        # )
 
         # # previous actions
         previous_actions = ObsTerm(func=mdp.last_action)
@@ -158,19 +149,50 @@ class EventCfg:
 class TerminationCfg:
     # reset on timeout
     time_out = DoneTerm(func=mdp.time_out)
+    # reset on reaching the goal tolerance (pos)
+    after_goal_timeout = DoneTerm(
+        func=cmdp.terminate_after_goal,
+        params={
+            "robot_cfg": SceneEntityCfg("robot"),
+            "obj_cfg": SceneEntityCfg("obj"),
+            "dis_tol": 0.01
+        }
+    )
     # reset on null space encounter (from custom mdp) (need to add)
 
 
 @configclass
 class RewardCfg:
     # penalty for just existing
-    alive_penalty = RewTerm(
-        func=mdp.is_alive,
-        weight=1.0
-    )
+    # alive_penalty = RewTerm(
+    #     func=mdp.is_alive,
+    #     weight=-0.5
+    # )
+
+    # penalty for termination other than timeout
+    # termination_pen = RewTerm(
+    #     func=mdp.is_terminated,
+    #     weight=-0.5
+    # )
 
     # custom reward model (from cmdp) (need to addd)
+    goal_pen = RewTerm(
+        func=cmdp.goal_reward,
+        weight=1.0,
+        params={"robot_cfg": SceneEntityCfg("robot"), "obj_cfg": SceneEntityCfg("obj")}
+    )
 
+    # action penalty to learn optimized and less jittery actions --> in this scene setup its joint position action
+    action_pen = RewTerm(
+        func=cmdp.action_penalty,
+        weight=-0.01,
+    )
+
+    # action rate of change penalty 
+    action_rate_pen = RewTerm(
+        func=mdp.action_rate_l2,
+        weight=-0.0001
+    )
 
     # joint velocity penalty to control joint velocities
     joint_vel = RewTerm(
@@ -179,7 +201,7 @@ class RewardCfg:
         params={"asset_cfg": SceneEntityCfg("robot")},
     )
 
-
+    
 # optional ones
 @configclass
 class CurriculumCfg:

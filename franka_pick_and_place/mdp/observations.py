@@ -31,7 +31,7 @@ def robot_eef_state_env(env: ManagerBasedEnv, asset_cfg: SceneEntityCfg=SceneEnt
     robot: Articulation = env.scene[asset_cfg.name]
     eef_idx = robot.data.body_names.index("panda_leftfinger") 
     eef_pos, eef_q = robot.data.body_pos_w[: , eef_idx], robot.data.body_quat_w[:, eef_idx] # wrt world frame
-    eef_pos = eef_pos-env.scene.env_origins
+    eef_pos = eef_pos-env.scene.env_origins # pos wrt to the env origin
 
     return torch.cat((eef_pos, eef_q), dim=1)
 
@@ -44,7 +44,7 @@ def obj_state_w(
 
     return obj_world_state
 
-def obj_arm_relative_pose(
+def obj_pose_env(
     env: ManagerBasedEnv,
     asset_cfg: SceneEntityCfg = SceneEntityCfg("obj"),
 ):
