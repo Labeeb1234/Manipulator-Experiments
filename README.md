@@ -16,12 +16,12 @@
 
 - First Training Demo
   - After training 5 envs for more than 500 episodes (less than 1000-episodes)
-    - [video](https://github.com/user-attachments/assets/be928c7b-d279-4377-a167-dd227b47ba0e)
+    - [video_1](https://github.com/user-attachments/assets/be928c7b-d279-4377-a167-dd227b47ba0e)
 
 
 
   -  After training 5 envs for more than 2k episodes (less than 4k-episodes)
-    -  [video](https://github.com/user-attachments/assets/67f04259-4701-4d9d-ad26-e301ff86a27f)
+    -  [video_2](https://github.com/user-attachments/assets/67f04259-4701-4d9d-ad26-e301ff86a27f)
 
 
 ### =========================================================================
