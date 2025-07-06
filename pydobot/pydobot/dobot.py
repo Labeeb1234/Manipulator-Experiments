@@ -304,7 +304,7 @@ class Dobot:
         self.move_to(x, y, z, r)
 
     def move_to(self, x, y, z, r, wait=False):
-        self._set_ptp_cmd(x, y, z, r, mode=PTPMode.MOVL_ANGLE, wait=wait)
+        self._set_ptp_cmd(x, y, z, r, mode=PTPMode.MOVL_XYZ, wait=wait)
 
     def suck(self, enable):
         self._set_end_effector_suction_cup(enable)

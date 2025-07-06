@@ -5,7 +5,7 @@ from pydobot.enums.ptpMode import PTPMode
 import time
 
 available_ports = list_ports.comports()
-print(f'available ports: {[x.device for x in available_ports]}')
+# print(f'available ports: {[x.device for x in available_ports]}')
 port = available_ports[-1].device
 
 device = pydobot.Dobot(port=port, verbose=False)
@@ -16,9 +16,9 @@ print(f'x:{x} y:{y} z:{z} j1:{j1} j2:{j2} j3:{j3} j4:{j4}')
 poses = []
 start = time.time()
 while device.ser.isOpen():
-    pose = device.pose()
-    poses.append(pose)
-    device.move_to(x=0, y=0, z=60, r=j4, wait=False)
+    (x, y, z, r, j1, j2, j3, j4) = device.pose()
+    poses.append((x, y, z, r, j1, j2, j3, j4))
+    device.move_to(x=x, y=y, z=z, r=r, wait=False)
 
     if time.time()-start > 5.0:
         device._set_queued_cmd_clear()
