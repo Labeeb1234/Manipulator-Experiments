@@ -304,7 +304,7 @@ class Dobot:
         self.move_to(x, y, z, r)
 
     def move_to(self, x, y, z, r, wait=False):
-        self._set_ptp_cmd(x, y, z, r, mode=PTPMode.MOVJ_XYZ, wait=wait)
+        self._set_ptp_cmd(x, y, z, r, mode=PTPMode.MOVL_ANGLE, wait=wait)
 
     def suck(self, enable):
         self._set_end_effector_suction_cup(enable)
@@ -330,3 +330,19 @@ class Dobot:
         j3 = struct.unpack_from('f', response.params, 24)[0]
         j4 = struct.unpack_from('f', response.params, 28)[0]
         return x, y, z, r, j1, j2, j3, j4
+
+    #  ------- Custom Temp function to flush commands ----------------- (very bad func no error handling)
+    def flush_command_queue(self):
+        # STOP queued commands immediately
+        stop_msg = Message()
+        stop_msg.id = CommunicationProtocolIDs.SET_QUEUED_CMD_STOP_EXEC
+        stop_msg.ctrl = ControlValues.ONE  # Execute immediately
+        stop_msg.params = bytearray()
+        self._send_command(stop_msg, wait=False)
+
+        # CLEAR command queue immediately
+        clear_msg = Message()
+        clear_msg.id = CommunicationProtocolIDs.SET_QUEUED_CMD_CLEAR
+        clear_msg.ctrl = ControlValues.ONE  # Execute immediately
+        clear_msg.params = bytearray()
+        self._send_command(clear_msg, wait=False)
