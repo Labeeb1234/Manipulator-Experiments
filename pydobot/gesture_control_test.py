@@ -45,6 +45,29 @@ def constraint(val, clip_val):
 def rectangle_area(p1: tuple|np.ndarray, p2: tuple|np.ndarray)->float:
     return np.abs((p1[0]-p2[0])*(p1[1]-p2[1])) # square pixel units
 
+def low_pass_filter(curr_val, prev_val, alpha=0.6): # emea filter
+    curr_val = alpha*curr_val + (1-alpha)*prev_val
+    return curr_val
+
+def dead_zone_filter(val, threshold):
+    if abs(val) < threshold:
+        return 0.0
+    return val
+
+def dominant_axis_filter(dx, dy, darea, dominance_threshold=1.0):
+    abs_dx, abs_dy, abs_darea = abs(dx), abs(dy), abs(darea)
+    max_val = max(abs_dx, abs_dy, abs_darea)
+
+    # If max_val is 0, just return zeros
+    if max_val == 0:
+        return 0.0, 0.0, 0.0
+
+    # Zero out the others if they are significantly smaller than the dominant axis
+    dx_out = dx if abs_dx >= max_val / dominance_threshold else 0.0
+    dy_out = dy if abs_dy >= max_val / dominance_threshold else 0.0
+    darea_out = darea if abs_darea >= max_val / dominance_threshold else 0.0
+
+    return dx_out, dy_out, darea_out
 
 def camera_handlandmark_tracking(vis=True):
     hands = mp.solutions.hands.Hands(
@@ -57,6 +80,7 @@ def camera_handlandmark_tracking(vis=True):
     vid_cap = cv2.VideoCapture(0)
     try:
         prev_x, prev_y, prev_area = 0, 0, 0
+        prev_dx_filt, prev_dy_filt, prev_darea_filt = 0, 0, 0
         t0 = time.time()
 
         while vid_cap.isOpened():
@@ -81,15 +105,31 @@ def camera_handlandmark_tracking(vis=True):
                     # getting the centre coordinates
                     # using mid-point theorem
                     area = rectangle_area(p1=(x_topleft,y_topleft), p2=(x_bottomright, y_bottomright))
-                    cx, cy = (x_topleft+x_bottomright)//2, (y_topleft+y_bottomright)//2
+                    # cx, cy = (x_topleft+x_bottomright)//2, (y_topleft+y_bottomright)//2
+                    # using all the landmarks to find the geometric centre of the hand faster 
+                    cx = int(sum(lm.x for lm in hand_landmarks.landmark) / len(hand_landmarks.landmark) * W)
+                    cy = int(sum(lm.y for lm in hand_landmarks.landmark) / len(hand_landmarks.landmark) * H)
 
                     # computing changes in quatities for tracking
                     dx, dy, darea = cx-prev_x, cy-prev_y, area-prev_area
+                    dx = constraint(dx, clip_val=1.0)
+                    dy = constraint(dy, clip_val=1.0)
+                    darea = constraint(darea, clip_val=5.0)
 
-                    # using all the landmarks to find the geometric centre of the hand faster 
-                    # center_x = int(sum(lm.x for lm in hand_landmarks.landmark) / len(hand_landmarks.landmark) * W)
-                    # center_y = int(sum(lm.y for lm in hand_landmarks.landmark) / len(hand_landmarks.landmark) * H)
+                    # adding a low-pass filter for the pixel_changes
+                    dx = low_pass_filter(dx, prev_dx_filt)
+                    dy = low_pass_filter(dy, prev_dy_filt)
+                    darea = low_pass_filter(darea, prev_darea_filt, alpha=0.4)
+                    prev_dx_filt, prev_dy_filt, prev_darea_filt = dx, dy, darea
 
+                    # dominant axis filtering for proper axis pure motions (almost)
+                    # dx, dy, darea = dominant_axis_filter(dx, dy, darea, dominance_threshold=1.0)
+
+                    # # Apply dead zone thresholding
+                    dx = dead_zone_filter(dx, threshold=0.6)
+                    dy = dead_zone_filter(dy, threshold=0.6)
+                    darea = dead_zone_filter(darea, threshold=3.3)
+                    
                     if vis:
                         cv2.rectangle(frame, (x_topleft, y_topleft), (x_bottomright, y_bottomright), (255, 0, 0), 1)
                         cv2.circle(frame, (cx, cy), 4, (0, 0, 255), -1)
@@ -101,13 +141,7 @@ def camera_handlandmark_tracking(vis=True):
                         time_list.append(time.time() - t0)
 
                     prev_x, prev_y, prev_area = cx, cy, area
-
-
-                    # # landmark annotations and tracking
-                    # for lm in hand_landmarks.landmark:
-                    #     x, y, _ = int(lm.x*W), int(lm.y*H), lm.z
-                    #     # handlandmark annotation and tracking
-                    #     cv2.circle(frame, (x,y), 4, (0, 255, 0), -1)
+                    
 
             if vis:      
                 cv2.imshow("bgr camera frame", frame)
@@ -117,17 +151,10 @@ def camera_handlandmark_tracking(vis=True):
         cv2.destroyAllWindows()
 
 
-# def display_data():
-#     while True:
-#         with mutex_lock:
-#             if displacements:
-#                 dx, dy, depth_values = displacements[-1] # get latest values
-#                 print(f"dx, dy, depth: [{dx}, {dy}, {depth_values}]")
-        
-#         time.sleep(0.1)
+# def arm_feedback()
 
 # Thread for live plotting
-def display_data():
+def visualize_data(axis_x=True, axis_y=False, axis_area=False):
     plt.ion()
     fig, (ax1, ax2, ax3) = plt.subplots(3, 1, figsize=(8, 6))
     while True:
@@ -135,10 +162,12 @@ def display_data():
             ax1.clear()
             ax2.clear()
             ax3.clear()
-
-            ax1.plot(time_list, dx_list, label='dx')
-            ax2.plot(time_list, dy_list, label='dy')
-            ax3.plot(time_list, darea_list, label='Δarea')
+            if axis_x:
+                ax1.plot(time_list, dx_list, label='dx')
+            if axis_y:
+                ax2.plot(time_list, dy_list, label='dy')
+            if axis_area:
+                ax3.plot(time_list, darea_list, label='Δarea')
 
         ax1.set_ylabel('dx')
         ax2.set_ylabel('dy')
@@ -149,25 +178,46 @@ def display_data():
         ax2.legend()
         ax3.legend()
 
-        plt.pause(0.05)
+        plt.pause(0.01)
 
+def analyze_noise():
+    # using std for finding noise
+    avg_dx_std, avg_dy_std, avg_darea_std = 0.0, 0.0, 0.0
+    count = 0
 
+    for _ in range(100):
+        with mutex_lock:
+            if len(dx_list) == 0:
+                time.sleep(0.1)
+                continue
+            dx_std = np.std(dx_list)
+            dy_std = np.std(dy_list)
+            darea_std = np.std(darea_list)
+            avg_darea_std += darea_std
+            avg_dx_std += dx_std
+            avg_dy_std += dy_std
+            count += 1
+        print(f"[Noise STD] dx: {dx_std:.4f}, dy: {dy_std:.4f}, Δarea: {darea_std:.4f}")
+        time.sleep(0.1) # 10Hz
+
+    if count > 0:
+        print("\n=== Average Noise STD over {} samples ===".format(count))
+        print(f"Avg dx std: {avg_dx_std / count:.4f}")
+        print(f"Avg dy std: {avg_dy_std / count:.4f}")
+        print(f"Avg Δarea std: {avg_darea_std / count:.4f}")
+    else:
+        print("No data collected to calculate average noise.")
+    
+    
 
 
 
 def main():
     try:
-        tracking_thread = threading.Thread(target=display_data)
+        tracking_thread = threading.Thread(target=visualize_data)
         tracking_thread.start()
-
         camera_handlandmark_tracking(vis=True)
 
-        # display_data_thread = threading.Thread(target=display_data)
-        # display_data_thread.start()
-
-        # tracking_thread.join()
-        # display_data_thread.join()
-  
     except KeyboardInterrupt as e:
         print(f"User Interrupted Program!")
 
