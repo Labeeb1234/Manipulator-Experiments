@@ -42,3 +42,6 @@
 ## Dobot Magician (No End Effector Attached as of now hence a 3R system)
 
 - Gesture control
+
+### Acknowledgements
+- [Dobot-Magician Python SDK](https://github.com/luismesas/pydobot)
