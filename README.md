@@ -3,7 +3,7 @@
 ### =======================================================================
 - **Note**: Currently using RL_Games framework with PPO RL algo for the training process (for reach to pose).
 
-### IsaacLab RL based Pick And Place
+### IsaacLab RL based Pick And Place Task
 
 - Model Selected from default assets
 - Custom GymEnv and MDP Package created
