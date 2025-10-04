@@ -54,20 +54,6 @@ def dead_zone_filter(val, threshold):
         return 0.0
     return val
 
-def dominant_axis_filter(dx, dy, darea, dominance_threshold=1.0):
-    abs_dx, abs_dy, abs_darea = abs(dx), abs(dy), abs(darea)
-    max_val = max(abs_dx, abs_dy, abs_darea)
-
-    # If max_val is 0, just return zeros
-    if max_val == 0:
-        return 0.0, 0.0, 0.0
-
-    # Zero out the others if they are significantly smaller than the dominant axis
-    dx_out = dx if abs_dx >= max_val / dominance_threshold else 0.0
-    dy_out = dy if abs_dy >= max_val / dominance_threshold else 0.0
-    darea_out = darea if abs_darea >= max_val / dominance_threshold else 0.0
-
-    return dx_out, dy_out, darea_out
 
 def camera_handlandmark_tracking(vis=True):
     hands = mp.solutions.hands.Hands(
@@ -100,6 +86,7 @@ def camera_handlandmark_tracking(vis=True):
                 for hand_landmarks in results.multi_hand_landmarks:
                     # bounding box around detected hand
                     xs, ys = zip(*[(lm.x, lm.y) for lm in hand_landmarks.landmark])
+                    # xyXY
                     x_topleft, y_topleft = int(min(xs) * W), int(min(ys) * H)
                     x_bottomright, y_bottomright = int(max(xs) * W), int(max(ys) * H)
                     # getting the centre coordinates
@@ -122,14 +109,10 @@ def camera_handlandmark_tracking(vis=True):
                     darea = low_pass_filter(darea, prev_darea_filt, alpha=0.4)
                     prev_dx_filt, prev_dy_filt, prev_darea_filt = dx, dy, darea
 
-                    # dominant axis filtering for proper axis pure motions (almost)
-                    # dx, dy, darea = dominant_axis_filter(dx, dy, darea, dominance_threshold=1.0)
-
                     # # Apply dead zone thresholding
-                    dx = dead_zone_filter(dx, threshold=0.6)
-                    dy = dead_zone_filter(dy, threshold=0.6)
-                    darea = dead_zone_filter(darea, threshold=3.3)
-                    
+                    # dx = dead_zone_filter(dx, threshold=0.6)
+                    # dy = dead_zone_filter(dy, threshold=0.6)
+                    # darea = dead_zone_filter(darea, threshold=3.3)                    
                     if vis:
                         cv2.rectangle(frame, (x_topleft, y_topleft), (x_bottomright, y_bottomright), (255, 0, 0), 1)
                         cv2.circle(frame, (cx, cy), 4, (0, 0, 255), -1)
@@ -142,7 +125,6 @@ def camera_handlandmark_tracking(vis=True):
 
                     prev_x, prev_y, prev_area = cx, cy, area
                     
-
             if vis:      
                 cv2.imshow("bgr camera frame", frame)
                 if cv2.waitKey(1) & 0xFF == ord('q'):
@@ -151,10 +133,8 @@ def camera_handlandmark_tracking(vis=True):
         cv2.destroyAllWindows()
 
 
-# def arm_feedback()
-
 # Thread for live plotting
-def visualize_data(axis_x=True, axis_y=False, axis_area=False):
+def visualize_data(axis_x=True, axis_y=True, axis_area=True):
     plt.ion()
     fig, (ax1, ax2, ax3) = plt.subplots(3, 1, figsize=(8, 6))
     while True:
@@ -209,7 +189,6 @@ def analyze_noise():
         print("No data collected to calculate average noise.")
     
     
-
 
 
 def main():
