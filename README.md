@@ -1,3 +1,16 @@
+# Hardware Experiments
+
+### =========================================================================
+## Dobot Magician (Mock/Fake End Effector Attached as of now hence a 3R arm system)
+
+<div>
+  <img src="" alt="dobot magician hardware">
+</div>
+
+- starting off set up pydobot pkg a lightweight usb serial based com pkg to interface local system with dobot magician hardware for control credits [here](https://github.com/luismesas/pydobot)
+- Experimented with the pkg and tried different PTP modes for motion and control
+- **Note** --> The joint sensor values are extracted by the pydobot pkg to give out the eef pose in mm its workspace as well as the joint pos in degrees. There is also an 'r' param unpacked only used if end-effector is interfaced with the system, the r value gives out the end-effector rotation angle in degrees
+
 # Software Experiments
 
 ### =======================================================================
@@ -42,10 +55,7 @@
 
 
 
-# Hardware Experiments
 
-### =========================================================================
-## Dobot Magician (No End Effector Attached as of now hence a 3R system)
 
 - Gesture control
 
