@@ -1,15 +1,85 @@
 # Hardware Experiments
 
-### =========================================================================
-## Dobot Magician (Mock/Fake End Effector Attached as of now hence a 3R arm system)
+---
+
+## Dobot Magician  
+*(Currently equipped with a mock/fake end effector, effectively functioning as a 3R arm system)*
 
 <div>
-  <img src="" alt="dobot magician hardware">
+  <img src="" alt="Dobot Magician hardware" />
 </div>
 
-- starting off set up pydobot pkg a lightweight usb serial based com pkg to interface local system with dobot magician hardware for control credits [here](https://github.com/luismesas/pydobot)
-- Experimented with the pkg and tried different PTP modes for motion and control
-- **Note** --> The joint sensor values are extracted by the pydobot pkg to give out the eef pose in mm its workspace as well as the joint pos in degrees. There is also an 'r' param unpacked only used if end-effector is interfaced with the system, the r value gives out the end-effector rotation angle in degrees
+- Started by setting up the [`pydobot`](https://github.com/luismesas/pydobot) package — a lightweight USB serial communication library — to interface the local system with the Dobot Magician hardware.
+- Conducted experiments using the package to test various PTP (Point-To-Point) motion modes for robot control.
+- **Note:** The joint sensor values extracted by `pydobot` provide:
+  - The end-effector (EEF) pose in millimeters within the robot’s workspace,
+  - Joint positions in degrees,
+  - An `r` parameter representing the end-effector rotation angle in degrees, which is meaningful only if an end-effector is physically attached.
+
+---
+
+## Understanding Dobot Magician Pose Feedback
+
+### 1. Joint Position Estimation via Step Counting
+
+The Dobot Magician **does not use high-resolution absolute encoders** on all joints. Instead, its position feedback relies on:
+
+- **Stepper motors** (instead of servo motors),
+- **Step counting implemented in firmware** to keep track of motor positions,
+- **Mechanical limit switches** to establish the home (zero) position reference.
+
+#### What does this mean?
+
+- Upon performing a **homing operation**, the robot establishes a known zero reference point using the physical limit switches.
+- From this zero position, it **counts every motor step** to estimate the current joint angles.
+- The Cartesian position `(x, y, z, r)` is calculated by the robot’s firmware through **forward kinematics** based on these joint angles.
+
+Thus, when querying the robot’s pose, you are **not receiving direct sensor measurements** but rather the **internal model maintained by the firmware**, derived from commanded and tracked stepper motor movements.
+
+#### Important note — what if the robot is bumped or moved manually?
+
+- Because this is an **open-loop system after homing**, if you **physically move the robot arm by hand**, the firmware **cannot detect this disturbance**.
+- The system assumes that no steps are missed or skipped during operation.
+- If the arm is bumped, overloaded, or experiences mechanical slips causing lost steps, the reported pose can become **inaccurate** until the robot is homed again.
+
+---
+
+> Understanding this behavior is crucial when interpreting pose feedback and designing experiments or applications involving the Dobot Magician.
+
+
+
+
+## Understanding Dobot Magician Pose Feedback
+
+### 1. Joint Position Estimation via Step Counting
+
+The Dobot Magician **does not use high-resolution absolute encoders** on all its joints. Instead, it relies on:
+
+- **Stepper motors** (rather than servos)
+- **Step counting in the firmware** to track motor positions
+- **Mechanical limit switches** to define the home (zero) position
+
+#### What does this mean?
+
+- After performing a **homing operation**, the robot sets a known zero reference using the physical limit switches.
+- From this reference, it **counts every motor step** to estimate the current joint angles.
+- The Cartesian position `(x, y, z, r)` is then calculated by the robot’s firmware using **forward kinematics** based on these joint angles.
+
+Thus, when you query the robot’s pose, you are **not getting direct sensor measurements**, but rather the **firmware’s internal model** based on commanded and tracked stepper motor movements.
+
+#### Important note — what if the robot is bumped?
+
+- Since this system is essentially **open-loop after homing**, if you **physically move the robot arm by hand**, the firmware **has no way of detecting** this external disturbance.
+- The robot assumes that no steps are lost or skipped during operation.
+- Therefore, if the arm is bumped or overloaded, causing missed steps or mechanical slips, the reported pose may become **inaccurate** until the robot is homed again.
+
+---
+
+This behavior is important to understand when interpreting pose feedback and designing experiments or applications involving the Dobot Magician.
+
+
+
+  
 
 # Software Experiments
 
