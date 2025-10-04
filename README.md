@@ -9,8 +9,10 @@
   <img src="" alt="Dobot Magician hardware" />
 </div>
 
+
 - Started by setting up the [`pydobot`](https://github.com/luismesas/pydobot) package — a lightweight USB serial communication library — to interface the local system with the Dobot Magician hardware.
 - Conducted experiments using the package to test various PTP (Point-To-Point) motion modes for robot control.
+- Here is the Dobot Magician Hardware [user guide](https://www.generationrobots.com/media/Dobot-Magician-User-Manual-V1.2.4.pdf?srsltid=AfmBOorvQr62dOwXR68afS7-bREsKwmtFq0SUyWa29sUH7gtJNatVLZY)
 - **Note:** The joint sensor values extracted by `pydobot` provide:
   - The end-effector (EEF) pose in millimeters within the robot’s workspace,
   - Joint positions in degrees,
