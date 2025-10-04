@@ -48,11 +48,17 @@ Thus, when querying the robot’s pose, you are **not receiving direct sensor me
 
 
 ## Dobot Magician Hardware ROS2 Interfacing (Made using PyDobot module so the pkg is in rclpy for now)
- - currently trying to interface dobot magician to ros2 by extracting joint states and eef states and publishing them to ros2 topics at fixed rates (10Hz)
+ - Interface dobot magician to ros2 by extracting joint states and eef states and publishing them to ros2 topics at fixed rates (10Hz)
  - Home Pose Figure given below (all joint pos at 0 rads(degs))
     <div>
      <img src="" alt="home configuration"/>
     </div>
+- Verified the ros2 state interface package on RViz using a digital twin examples the states are matching (need to fine tune a bit more after control pkg is integrated) ---> shown below
+  <div>
+      <img src="" alt="joint states matching alright"/>
+  </div>
+
+- Control functionality via ros2 to be done (ongoing)
 
 
 
