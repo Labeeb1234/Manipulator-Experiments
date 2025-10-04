@@ -11,7 +11,6 @@ from .enums.ControlValues import ControlValues
 
 
 class Dobot:
-
     def __init__(self, port, verbose=False):
         threading.Thread.__init__(self)
 

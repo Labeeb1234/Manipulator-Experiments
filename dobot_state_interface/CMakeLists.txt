@@ -15,6 +15,7 @@ find_package(sensor_msgs REQUIRED)
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
 ament_python_install_package(pydobot)
+ament_python_install_package(dobot_rclpy_interface)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
