@@ -18,7 +18,7 @@
 
 ---
 
-## Understanding Dobot Magician Pose Feedback
+## Understanding Dobot Magician Default Pose Feedback
 
 ### 1. Joint Position Estimation via Step Counting
 
@@ -49,33 +49,7 @@ Thus, when querying the robot’s pose, you are **not receiving direct sensor me
 
 
 
-## Understanding Dobot Magician Pose Feedback
 
-### 1. Joint Position Estimation via Step Counting
-
-The Dobot Magician **does not use high-resolution absolute encoders** on all its joints. Instead, it relies on:
-
-- **Stepper motors** (rather than servos)
-- **Step counting in the firmware** to track motor positions
-- **Mechanical limit switches** to define the home (zero) position
-
-#### What does this mean?
-
-- After performing a **homing operation**, the robot sets a known zero reference using the physical limit switches.
-- From this reference, it **counts every motor step** to estimate the current joint angles.
-- The Cartesian position `(x, y, z, r)` is then calculated by the robot’s firmware using **forward kinematics** based on these joint angles.
-
-Thus, when you query the robot’s pose, you are **not getting direct sensor measurements**, but rather the **firmware’s internal model** based on commanded and tracked stepper motor movements.
-
-#### Important note — what if the robot is bumped?
-
-- Since this system is essentially **open-loop after homing**, if you **physically move the robot arm by hand**, the firmware **has no way of detecting** this external disturbance.
-- The robot assumes that no steps are lost or skipped during operation.
-- Therefore, if the arm is bumped or overloaded, causing missed steps or mechanical slips, the reported pose may become **inaccurate** until the robot is homed again.
-
----
-
-This behavior is important to understand when interpreting pose feedback and designing experiments or applications involving the Dobot Magician.
 
 
 
