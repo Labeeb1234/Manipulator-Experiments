@@ -47,7 +47,12 @@ Thus, when querying the robot’s pose, you are **not receiving direct sensor me
 > Understanding this behavior is crucial when interpreting pose feedback and designing experiments or applications involving the Dobot Magician.
 
 
-
+## Dobot Magician Hardware ROS2 Interfacing (Made using PyDobot module so the pkg is in rclpy for now)
+ - currently trying to interface dobot magician to ros2 by extracting joint states and eef states and publishing them to ros2 topics at fixed rates (10Hz)
+ - Home Pose Figure given below (all joint pos at 0 rads(degs))
+    <div>
+     <img src="" alt="home configuration"/>
+    </div>
 
 
 
