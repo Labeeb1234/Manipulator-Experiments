@@ -62,7 +62,7 @@ Thus, when querying the robot’s pose, you are **not receiving direct sensor me
       <img src="" alt="joint states matching alright"/>
   </div>
 
-- Control functionality via ros2 to be done. So the entire hardware was sucessfully interfaced with ROS2 with both c-space as well as task-space control functionality. [codebase here]()
+- Control functionality via ros2 to be done. So the entire hardware was sucessfully interfaced with ROS2 with both c-space as well as task-space control functionality. [codebase here](https://github.com/Labeeb1234/Manipulator-Experiments/tree/main/dobot_state_interface/dobot_rclpy_interface)
 - From the videos below there is clearly an undesireable offset in the digital twin model (the URDF in RViz) the URDF was taken from the official docs of the dobot but for some reason there was already an issue with the joint  offsets but the joint axis is clearly matched up properly with the hardware joint axes. Will need to fix the URDF for it.
 - Another issue that is visible is the update rate of the feedback from the hardware is close to 2.5Hz hence the RViz update is a little on the choppy side. (any suggestions to reduce the choppyness if it is even possible is welcomed)
 - The current ros2 interface architecture for the dobot hardware is written in rclpy with pub/sub, but I feel like creating an action-server for it may make it more robust (something to work on later on)
