@@ -2,7 +2,7 @@
 
 ---
 
-## Dobot Magician  
+## Dobot Magician (Hardware Used)  
 *(Currently equipped with a mock/fake end effector, effectively functioning as a 3R arm system)*
 
 <div>
@@ -17,6 +17,8 @@
   - The end-effector (EEF) pose in millimeters within the robot’s workspace,
   - Joint positions in degrees,
   - An `r` parameter representing the end-effector rotation angle in degrees, which is meaningful only if an end-effector is physically attached.
+
+ - Software stack used: ROS2-Humble(would definitely work in Jazzy and Kilted as long as the Ubuntu 24.04 is used for those distros), Tested on Ubuntu 22.04, Python3.10.12, PyDobot
 
 ---
 
@@ -60,8 +62,21 @@ Thus, when querying the robot’s pose, you are **not receiving direct sensor me
       <img src="" alt="joint states matching alright"/>
   </div>
 
-- Control functionality via ros2 to be done (ongoing)
+- Control functionality via ros2 to be done. So the entire hardware was sucessfully interfaced with ROS2 with both c-space as well as task-space control functionality. [codebase here]()
+- From the videos below there is clearly an undesireable offset in the digital twin model (the URDF in RViz) the URDF was taken from the official docs of the dobot but for some reason there was already an issue with the joint  offsets but the joint axis is clearly matched up properly with the hardware joint axes. Will need to fix the URDF for it.
+- The current ros2 interface architecture for the dobot hardware is written in rclpy with pub/sub, but I feel like creating an action-server for it may make it more robust (something to work on later on)
+- Video Demos Given below for both joint as well as end effector control
 
+
+  <div>
+    <img src="" alt="joint space control mode"/>
+  </div>
+  <div>
+    <img src="" alt="end effector control mode"/>
+  </div>
+
+- So for now the digital twin part is complete as a rough prototype.
+- **Note** May build a custom pkg for Dobot Communication in CPP later on after testing out Moveit2 and maybe even some VLA/RL algo on this hardware.
 
 
 
