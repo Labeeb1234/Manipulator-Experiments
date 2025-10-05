@@ -80,9 +80,12 @@ Thus, when querying the robot’s pose, you are **not receiving direct sensor me
 - **Note** May build a custom pkg for Dobot Communication in CPP later on after testing out Moveit2 and maybe even some VLA/RL algo on this hardware.
 
 
+- Gesture Control
+  <div>
+  <img src="" alt="Temu Gesture Control"/>
+  </div>
 
-
-  
+### =========================================================================  
 
 # Software Experiments
 
@@ -130,7 +133,6 @@ Thus, when querying the robot’s pose, you are **not receiving direct sensor me
 
 
 
-- Gesture control
 
 ### Acknowledgements
 - [Dobot-Magician Python SDK](https://github.com/luismesas/pydobot)
