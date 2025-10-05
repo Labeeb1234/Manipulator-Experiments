@@ -5,24 +5,24 @@ from sensor_msgs.msg import JointState
 from geometry_msgs.msg import PoseStamped
 from rclpy.callback_groups import ReentrantCallbackGroup
 
-import time
 import pydobot
 from pydobot.enums import PTPMode
 import threading
-from serial.tools import list_ports
 from typing import Union, Optional
 from enum import Enum
 import numpy as np
 
 
 class DobotInterface(Node):
-    def __init__(self, port_id, verbose: Optional[bool], ptpMode: Optional[Union[Enum, PTPMode.MOVJ_ANGLE]]):
+    def __init__(self, port_id, verbose: Optional[bool], ptpMode: Optional[Union[Enum]]=PTPMode.MOVJ_XYZ):
         super().__init__("dobot_interface_node")
         # Dobot Device Object Creation
         try:
             self.dobot_mag = pydobot.Dobot(port=port_id, verbose=verbose)
         except Exception as e:
             self.get_logger().error(f"Failed to connect to serial port: {e}")
+        self.ptp_mode = ptpMode # setting up PTPMode can never be changed mid operation
+        
         self.dobot_lock = threading.Lock() # declaring a threading lock for dobot data to prevent race condition just in case
         
         # creating reentrant callback group object
@@ -62,18 +62,18 @@ class DobotInterface(Node):
         self.get_logger().info(f"Sending stamped joint commands: [{j1}, {j2}, {j3}, {j4}], @[{cmd_time_stamp}]")
         try:
             with self.dobot_lock:
-                self.dobot_mag.move_to(x=j1, y=j2, z=j3, r=r, wait=False)
+                self.dobot_mag.move_to(x=j1, y=j2, z=j3, r=r, mode=self.ptp_mode, wait=False)
         except Exception as e:
             self.get_logger().error(f"Joint command failed: {e}")
         
     def eef_commander(self, cmd):
         cmd_time_stamp = cmd.header.stamp
-        x, y, z = cmd.pose.position.x, cmd.pose.position.y, cmd.pose.position.z
+        x, y, z = self.m_to_mm(cmd.pose.position.x), self.m_to_mm(cmd.pose.position.y), self.m_to_mm(cmd.pose.position.z) # x,y,z are in mm
         self.get_logger().info(f"Sending EEF targets: [{x}, {y}, {z}, {z}], @[{cmd_time_stamp}]")
         
         try:
             with self.dobot_lock:
-                self.dobot_mag.move_to(x=x, y=y, z=z, wait=True)
+                self.dobot_mag.move_to(x=x, y=y, z=z, r=0, mode=self.ptp_mode, wait=False)
         except Exception as e:
             self.get_logger().error(f"Move command failed: {e}")
     # -----------------------------------------------------------------------------------------------------------
@@ -130,6 +130,10 @@ class DobotInterface(Node):
     @staticmethod
     def mm_to_m(val):
         return (val/1000)
+
+    @staticmethod
+    def m_to_mm(val):
+        return (val*1000)
     
 
 

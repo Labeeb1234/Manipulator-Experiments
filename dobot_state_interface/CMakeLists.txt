@@ -31,6 +31,7 @@ endif()
 
 install(PROGRAMS
     scripts/dobot_states.py
+    scripts/test.py
     DESTINATION lib/${PROJECT_NAME}
 )
 
