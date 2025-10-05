@@ -15,7 +15,7 @@ def main(args=None):
     print(f"[INFO]: Dobot Serial Port ID: {port_id}")
 
     rclpy.init(args=args)
-    node = DobotInterface(port_id=port_id, verbose=False, ptpMode=PTPMode.MOVEJ_XYZ)
+    node = DobotInterface(port_id=port_id, verbose=False, ptpMode=PTPMode.MOVJ_XYZ)
     executors = rclpy.executors.MultiThreadedExecutor(4)
     executors.add_node(node)
 
