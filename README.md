@@ -3,7 +3,7 @@
 ---
 
 ## Dobot Magician (Hardware Used)  
-*(Currently equipped with a mock/fake end effector, effectively functioning as a 3R arm system)*
+*(The equiped suction end effector with servo control for axis rotation isn't connected to the external suction module)*
 
 <div>
   <img src="https://github.com/user-attachments/assets/fd9398d0-eeab-4eae-9146-3130e191118b" alt="Dobot Magician hardware" height="800" width="800"/>
