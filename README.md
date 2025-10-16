@@ -6,7 +6,7 @@
 *(Currently equipped with a mock/fake end effector, effectively functioning as a 3R arm system)*
 
 <div>
-  <img src="https://github.com/user-attachments/assets/fd9398d0-eeab-4eae-9146-3130e191118b" alt="Dobot Magician hardware" />
+  <img src="https://github.com/user-attachments/assets/fd9398d0-eeab-4eae-9146-3130e191118b" alt="Dobot Magician hardware" height="800" width="800"/>
 </div>
 
 
