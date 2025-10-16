@@ -1,0 +1,4 @@
+from .shape_detection import plain_shape_detection
+from .edge_to_shape_detection import verify_edge_detection_integrity
+from .template_detection import differentiate_template_figure
+from .qip import *
