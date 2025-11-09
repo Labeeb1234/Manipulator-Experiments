@@ -52,7 +52,7 @@ Thus, when querying the robot’s pose, you are **not receiving direct sensor me
 
 
 ## Dobot Magician Hardware ROS2 Interfacing (Made using PyDobot module so the pkg is in rclpy for now)
- - Interface dobot magician to ros2 by extracting joint states and eef states and publishing them to ros2 topics at fixed rates (10Hz)
+ - Interface dobot magician to ros2 by extracting joint states and eef states and publishing them to ros2 topics at fixed rates (10Hz) --> the dobot hardware feedback update rate is around 2.5Hz(in async mode) and 1.4Hz (Sync Mode).
  - Home Pose Figure given below (all joint pos at 0 rads(degs))
     <div>
      <img src="" alt="home configuration"/>
