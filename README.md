@@ -11,7 +11,16 @@
 
 
 - Started by setting up the [`pydobot`](https://github.com/luismesas/pydobot) package — a lightweight USB serial communication library — to interface the local system with the Dobot Magician hardware.
-- Conducted experiments using the package to test various PTP (Point-To-Point) motion modes for robot control.
+- Conducted experiments using the package to test various PTP (Point-To-Point) motion modes for robot control. Two experiments done on two major(IK) modes are shown below. One is the MOVJ_XYZ and the other is MOVL_XYZ; both being task-space based control with 'L' being the PTP motion will be in a straight path whereas 'J' will make the PTP motion take a non-linear path as you can see briefly in the gifs given below where the end-effector (x-y) tracjectory is plotted online during the motion (PS: the end-effector was only given planner 2-D motion to properly test the PTP motion differences.
+
+    <div>
+     <img src="" alt="MOVJ_XYZ_MOTION"/>
+    </div>
+      
+    <div>
+     <img src="" alt="MOVL_XYZ_MOTION"/>
+    </div
+  
 - Here is the Dobot Magician Hardware [user guide](https://www.generationrobots.com/media/Dobot-Magician-User-Manual-V1.2.4.pdf?srsltid=AfmBOorvQr62dOwXR68afS7-bREsKwmtFq0SUyWa29sUH7gtJNatVLZY)
 - **Note:** The joint sensor values extracted by `pydobot` provide:
   - The end-effector (EEF) pose in millimeters within the robot’s workspace,
@@ -52,7 +61,7 @@ Thus, when querying the robot’s pose, you are **not receiving direct sensor me
 
 
 ## Dobot Magician Hardware ROS2 Interfacing (Made using PyDobot module so the pkg is in rclpy for now)
- - Interface dobot magician to ros2 by extracting joint states and eef states and publishing them to ros2 topics at fixed rates (10Hz) --> the dobot hardware feedback update rate is around 2.5Hz(in async mode) and 1.4Hz (Sync Mode).
+ - Interface dobot magician to ros2 by extracting joint states and eef states and publishing them to ros2 topics at fixed rates (10Hz) --> the dobot hardware feedback update rate is around 2.5Hz(in async mode) and 1.4Hz (sync Mode). Here async means the consecutive injected motions commands aren't blocked by the ongoing motion command which reduced the delay in extracting the feedback from the dobot sensors too.
  - Home Pose Figure given below (all joint pos at 0 rads(degs))
     <div>
      <img src="" alt="home configuration"/>
@@ -87,7 +96,11 @@ Thus, when querying the robot’s pose, you are **not receiving direct sensor me
 
 ### =========================================================================  
 
-# Software Experiments
+
+
+
+
+# Software Experiments [Franka Emika Panda Arm]
 
 ### =======================================================================
 - **Note**: Currently using RL_Games framework with PPO RL algo for the training process (for reach to pose).
@@ -101,7 +114,7 @@ Thus, when querying the robot’s pose, you are **not receiving direct sensor me
   <img src="https://github.com/user-attachments/assets/c2783e19-e49e-4d3f-9680-fe541ffb5d2c" alt="Custom Env Testing" />
 </div>
 
-### IsaacLab RL Based Reach To Goal Pose Task 
+### IsaacLab RL Based Reach To Goal Pose Task
 
 - First Training Demo
   
