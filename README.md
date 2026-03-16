@@ -1,4 +1,24 @@
 # Hardware Experiments
+---
+
+## Dynamic Pick And Place from a conveyor (constant velocity)
+
+- By implementing color space based coloured block detection we were able to consistently detect coloured target cube objects on a conveyor using a custom CV based algorithm
+- Using the pixel target positions we implemented a PD-controller based EEF-POSE tracking with manually tuned offsets for making the robotic arm track and reach a pre-grasp position and then move to pick pose to pick the object from the conveyor. 
+
+- will add demo vids here
+
+<div>
+</div>
+
+
+<div>
+</div>
+
+
+## A very rough Gesture control on a 3-DOF(+1 eef servo control along its z-axis)
+
+
 
 ---
 
