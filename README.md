@@ -159,7 +159,7 @@ Thus, when querying the robot’s pose, you are **not receiving direct sensor me
   - During the initial test the action space control was purely joint control (c-space control) which since there were like 8-states to control, with no kinematic or dynamic constraints mapping to the desired actions was very hard and plus clearly don't have too much time to train the model to fit this complex of a model. So in order to get better control and response plus faster convergence to the required solution the kinematic constraints was introduced and by using IDK the action control will be in the t-space (in global frame of ref/env frame of ref).
   - Just a small side track: teleop policy integration demo video (down here) --> (will use to collect data/demonstration for imitation learning for more advanced taks)
 
-### =========================================================================
+### =======================================================================
 
 
 
