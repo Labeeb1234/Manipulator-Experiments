@@ -311,7 +311,7 @@ class Dobot:
     def grip(self, enable):
         self._set_end_effector_gripper(enable)
 
-    def speed(self, velocity=100., acceleration=100.):
+    def speed(self, velocity=130., acceleration=80.):
         self._set_ptp_common_params(velocity, acceleration)
         self._set_ptp_coordinate_params(velocity, acceleration)
 
