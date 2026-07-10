@@ -1,0 +1,14 @@
+{
+	"nodes":[
+		{"id":"29354a3ed98fd29b","type":"text","text":"## Object Detection and Tracking\n- Yolo-NCNN model 26 for object detection and tracking (using pre-trained due to short time for testing)\n- Testing to see if color blocks can be detected and tracked","x":-125,"y":-30,"width":425,"height":270,"color":"3"},
+		{"id":"8f653d902c6611ff","type":"text","text":"## Pick & Place Strategy/Grasp Planning\n- Basic PD controller for pose tracking (??)\n- Dynamic Grasping paper implementation (no time for this go through the paper once)","x":-340,"y":-500,"width":380,"height":289,"color":"1"},
+		{"id":"a4c809d54781ce50","type":"text","text":"# Task States\n- using FSMs to organise the pick and place task structuring (done)\n- Threading the Dobot control action states (done working)","x":-700,"y":-30,"width":490,"height":270,"color":"2"},
+		{"id":"3c34ab949bdc3827","type":"text","text":"## Camera Calibration & Setup\n- Attaching camera physically at an offset at the end-effector (currently using a temp setup will 3D print something as a semi-permanent attachment)\n- realsense d435i (not required to calibrate much)\n- pyrealsense2 SDK for rgb frame and depth frame (if necessary)\n- Camera RGB Info:\n\t- Camera Model: PinHole Based\n\t- Distortion Model:\n\t- Intrinsics & Extrinsics","x":420,"y":-123,"width":400,"height":457,"color":"3"}
+	],
+	"edges":[
+		{"id":"5625aaa47ba3f7b1","fromNode":"29354a3ed98fd29b","fromSide":"right","toNode":"3c34ab949bdc3827","toSide":"left"},
+		{"id":"0ea98c95744b3ca2","fromNode":"3c34ab949bdc3827","fromSide":"left","toNode":"29354a3ed98fd29b","toSide":"right"},
+		{"id":"5cd74cb5240a6ed9","fromNode":"8f653d902c6611ff","fromSide":"bottom","toNode":"a4c809d54781ce50","toSide":"top"},
+		{"id":"761b9ac9cf6d99fa","fromNode":"8f653d902c6611ff","fromSide":"bottom","toNode":"29354a3ed98fd29b","toSide":"top"}
+	]
+}
