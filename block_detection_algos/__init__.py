@@ -1,0 +1,1 @@
+from .HSV2 import CubeDetector
