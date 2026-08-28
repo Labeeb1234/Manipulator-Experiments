@@ -114,6 +114,10 @@ Thus, when querying the robot’s pose, you are **not receiving direct sensor me
   <img src="" alt="Temu Gesture Control"/>
   </div>
 
+- Dynamic Pick and Place Task (Version-0.1)
+  - Basically using basic frame processing color coded blocks moving on a conveyor belt was detected using HSV-thresholding and picked up by the dobot using suction gripper and placed to final drop point. The detection and picking action takes place while the block moves over the conveyor at a constant speed
+  - **video demo tba**   
+
 ### =========================================================================  
 
 
