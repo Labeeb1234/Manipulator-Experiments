@@ -38,7 +38,7 @@
     </div>
       
     <div>
-     <img src="" alt="MOVL_XYZ_MOTION"/>
+     <img src="https://github.com/Labeeb1234/Manipulator-Experiments/blob/main/video_demos/MOVEL_XYZ_motion.mp4" alt="MOVL_XYZ_MOTION"/>
     </div
   
 - Here is the Dobot Magician Hardware [user guide](https://www.generationrobots.com/media/Dobot-Magician-User-Manual-V1.2.4.pdf?srsltid=AfmBOorvQr62dOwXR68afS7-bREsKwmtFq0SUyWa29sUH7gtJNatVLZY)
