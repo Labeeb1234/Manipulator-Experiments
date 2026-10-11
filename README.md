@@ -34,7 +34,7 @@
 - Conducted experiments using the package to test various PTP (Point-To-Point) motion modes for robot control. Two experiments done on two major(IK) modes are shown below. One is the MOVJ_XYZ and the other is MOVL_XYZ; both being task-space based control with 'L' being the PTP motion will be in a straight path whereas 'J' will make the PTP motion take a non-linear path as you can see briefly in the gifs given below where the end-effector (x-y) tracjectory is plotted online during the motion (PS: the end-effector was only given planner 2-D motion to properly test the PTP motion differences.
 
     <div>
-     <img src="" alt="MOVJ_XYZ_MOTION"/>
+     <img src="https://github.com/Labeeb1234/Manipulator-Experiments/blob/main/video_demos/MOVEJ_XYZ_motion.mp4" alt="MOVJ_XYZ_MOTION"/>
     </div>
       
     <div>
