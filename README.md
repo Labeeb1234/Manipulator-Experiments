@@ -111,7 +111,7 @@ Thus, when querying the robot’s pose, you are **not receiving direct sensor me
 
 - Gesture Control
   <div>
-  <img src="" alt="Temu Gesture Control"/>
+  <img src="https://github.com/Labeeb1234/Manipulator-Experiments/blob/main/video_demos/gesture_control_draft_1.mp4" alt="Temu Gesture Control"/>
   </div>
 
 - Dynamic Pick and Place Task (Version-0.1)
